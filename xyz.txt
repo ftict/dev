@@ -1,0 +1,188 @@
+
+
+sudo apt-get update
+
+sudo apt-get install\
+ca-certificates\
+curl\
+gnupg\
+lsb-release
+
+sudo mkdir -p/etc/apt/keyrings
+
+get the official GPG key from Docker webpage and install it
+
+set up the repository
+
+install docker engine by,
+
+sudo apt-get update
+
+sudo apt-get install docker-ce docker-ce-cli containerd.io docker-compose-plugin
+
+
+
+
+
+
+show a list of running containers - docker ps
+
+show the detailed information of stopped and running containers - docker ps-a
+
+docker user's information - docker info
+
+delete a running conatainer - docker rm -f containerName
+
+show detailed information of docker container - docker inspect nginx(container name)
+
+install an image from docker registry in your local machine - docker pull nginx(image name)
+
+run an installed container - docker run -p 80:80 nginx(image name)
+
+install an image from tar file - docker load -i nginx.tar
+
+remove the running container but keep the image in workspace - docker rm container-id
+
+remove the image from your local workspace - docker rmi image-name
+
+remove all the stopped containers information - docker rm $(docker ps -aq)
+
+stop container - docker stop containerName
+
+show logs of container - docker logs container_id
+
+------------------------------------------------------------------------------
+
+Dockerfile for web page
+
+
+FROM ubuntu
+MAINTAINER seusl
+RUN apt-get update
+RUN apt-get install -y nginx
+ENTRYPOINT ["/usr/sbin/nginx","-g","daemon off;"]
+ADD index.html /var/www/html/index.nginx-debian.html
+COPY . /var/www/html/
+EXPOSE 80
+
+docker build -t imagename:latest .
+docker run -p 80:80 imagename
+
+------------------------------------------------------------------------------=-
+
+wordpress installation
+
+touch docker-compose.yml
+
+version: '3'
+services:
+  wordpress:
+    image: wordpress
+    ports: 
+      - "8002:80"
+    depends_on: 
+      - db
+    volumes:
+      - wordpress_files:/var/www/html
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: 1234
+    restart: always
+
+  db:
+    image: mysql
+    volumes:
+     - db_data:/var/lib/mysql
+    environment:
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: 1234
+      MYSQL_ROOT_PASSWORD: 1234
+    restart: always
+    
+volumes: 
+  wordpress_files:
+  db_data:
+
+
+sudo docker compose up
+
+------------------------------------------------------------------------
+
+Network creation
+
+docker network ls
+
+docker network create --subnet=172.10.10.1/16 NW_name
+
+docker inspect NW_name
+
+docker run --net NW_name --ip=172.10.10.1 -it ubuntu bash
+
+apt update
+
+apt install iproute2
+
+ip addr
+
+connect a running container to a network
+
+docker network connect NWname containerID
+
+give ip when connecting
+docker network connect --ip 172.10.10.1 NWname containerID
+
+assign network when running a container
+docker run -itd --net=fot nginx
+
+
+
+-----------------------------------------------------------
+
+
+flag commands
+
+
+docker run --rm -p 80:80 nginx - when exiting from image auto remove the container
+
+docker run -it nginx bin/bash - user interactive mode
+
+docker run -d nginx - daemon mode run in background
+
+after running container,
+
+docker exec -it containerID bin/bash or echo "I'm inside the container" 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
